@@ -14,6 +14,7 @@ import {
   Platform
 } from 'react-native';
 import PropTypes from 'prop-types';
+import WebModal from 'modal-react-native-web';
 
 const TOUCHABLE_ELEMENTS = [
   'TouchableHighlight',
@@ -121,8 +122,8 @@ export default class ModalDropdown extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, state) {
-    let {selectedIndex, loading} = state;
-    const {defaultIndex, defaultValue, options} = nextProps;
+    let { selectedIndex, loading } = state;
+    const { defaultIndex, defaultValue, options } = nextProps;
     let newState = null;
 
     if (selectedIndex < 0) {
@@ -257,31 +258,57 @@ export default class ModalDropdown extends Component {
       const animationType = animated ? 'fade' : 'none';
 
       return (
-        <Modal
-          animationType={animationType}
-          visible
-          transparent
-          onRequestClose={this._onRequestClose}
-          supportedOrientations={[
-            'portrait',
-            'portrait-upside-down',
-            'landscape',
-            'landscape-left',
-            'landscape-right',
-          ]}
-        >
-          <TouchableWithoutFeedback
-            accessible={accessible}
-            disabled={!showDropdown}
-            onPress={this._onModalPress}
+        Platform.OS !== 'web' ?
+          <Modal
+            animationType={animationType}
+            visible
+            transparent
+            onRequestClose={this._onRequestClose}
+            supportedOrientations={[
+              'portrait',
+              'portrait-upside-down',
+              'landscape',
+              'landscape-left',
+              'landscape-right',
+            ]}
           >
-            <View style={styles.modal}>
-              <View style={[styles.dropdown, dropdownStyle, frameStyle]}>
-                {loading ? this._renderLoading() : this._renderDropdown()}
+            <TouchableWithoutFeedback
+              accessible={accessible}
+              disabled={!showDropdown}
+              onPress={this._onModalPress}
+            >
+              <View style={styles.modal}>
+                <View style={[styles.dropdown, dropdownStyle, frameStyle]}>
+                  {loading ? this._renderLoading() : this._renderDropdown()}
+                </View>
               </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
+            </TouchableWithoutFeedback>
+          </Modal> :
+          <WebModal
+            animationType={animationType}
+            visible
+            transparent
+            onRequestClose={this._onRequestClose}
+            supportedOrientations={[
+              'portrait',
+              'portrait-upside-down',
+              'landscape',
+              'landscape-left',
+              'landscape-right',
+            ]}
+          >
+            <TouchableWithoutFeedback
+              accessible={accessible}
+              disabled={!showDropdown}
+              onPress={this._onModalPress}
+            >
+              <View style={styles.modal}>
+                <View style={[styles.dropdown, dropdownStyle, frameStyle]}>
+                  {loading ? this._renderLoading() : this._renderDropdown()}
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </WebModal>
       );
     }
   }
@@ -309,7 +336,7 @@ export default class ModalDropdown extends Component {
 
     if (showInLeft) {
       positionStyle.left = this._buttonFrame.x;
-      if(isFullWidth) {
+      if (isFullWidth) {
         positionStyle.right = rightSpace - this._buttonFrame.w;
       }
     } else {
@@ -387,7 +414,7 @@ export default class ModalDropdown extends Component {
     const key = `row_${index}`;
     const highlighted = index === selectedIndex;
     const value =
-        (renderRowText && renderRowText(item)) || item.toString();
+      (renderRowText && renderRowText(item)) || item.toString();
     const row = !renderRow ? (
       <Text
         style={[
@@ -433,8 +460,8 @@ export default class ModalDropdown extends Component {
     }
 
     if (!multipleSelect &&
-        (!onDropdownWillHide || onDropdownWillHide() !== false)
-       ) {
+      (!onDropdownWillHide || onDropdownWillHide() !== false)
+    ) {
       this.setState({
         showDropdown: false,
       });
@@ -451,7 +478,7 @@ export default class ModalDropdown extends Component {
 const styles = StyleSheet.create({
   button: {
     // justifyContent: 'center',
-    flexDirection:'row',
+    flexDirection: 'row',
     alignItems: 'center'
   },
   buttonText: {
